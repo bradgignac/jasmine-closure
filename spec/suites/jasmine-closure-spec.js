@@ -178,17 +178,20 @@ describe("jasmine.Fixtures", function() {
     
     it("should insert HTML into container", function() {
       jasmine.getFixtures().set(html);
-      expect(fixturesContainer().innerHTML).toEqual(jasmine.JQuery.browserTagCaseIndependentHtml(html));
+      expect(fixturesContainer().innerHTML).toEqual(jasmine.Closure.browserTagCaseIndependentHtml(html));
     });
 
-    it("should insert jQuery element into container", function() {
-      jasmine.getFixtures().set($(html));
-      expect(fixturesContainer().innerHTML).toEqual(jasmine.JQuery.browserTagCaseIndependentHtml(html));
+    it("should insert element into container", function() {
+      var ele = goog.dom.createDom('DIV');
+      ele.innerHTML = "some HTML";
+      
+      jasmine.getFixtures().set(ele);
+      expect(fixturesContainer().innerHTML).toEqual(jasmine.Closure.browserTagCaseIndependentHtml(html));
     });
 
     it("should have shortcut global method setFixtures", function() {
       setFixtures(html);
-      expect(fixturesContainer().innerHTML).toEqual(jasmine.JQuery.browserTagCaseIndependentHtml(html));
+      expect(fixturesContainer().innerHTML).toEqual(jasmine.Closure.browserTagCaseIndependentHtml(html));
     });
 
     describe("when fixture container does not exist", function() {
@@ -205,7 +208,7 @@ describe("jasmine.Fixtures", function() {
 
       it("should replace it with new content", function() {
         jasmine.getFixtures().set(html);
-        expect(fixturesContainer().innerHTML).toEqual(jasmine.JQuery.browserTagCaseIndependentHtml(html));
+        expect(fixturesContainer().innerHTML).toEqual(jasmine.Closure.browserTagCaseIndependentHtml(html));
       });
     });
   });
@@ -213,7 +216,8 @@ describe("jasmine.Fixtures", function() {
   describe("sandbox", function() {
     describe("with no attributes parameter specified", function() {
       it("should create DIV with id #sandbox", function() {
-        expect(jasmine.getFixtures().sandbox().html()).toEqual($('<div id="sandbox" />').html());
+        var expectedSandbox = goog.dom.createDom('DIV', { 'id': 'sandbox' }).innerHTML;
+        expect(jasmine.getFixtures().sandbox().innerHTML).toEqual(expectedSandbox);
       });
     });
 
@@ -223,16 +227,16 @@ describe("jasmine.Fixtures", function() {
           attr1: 'attr1 value',
           attr2: 'attr2 value'
         };
-        var element = $(jasmine.getFixtures().sandbox(attributes));
+        var element = jasmine.getFixtures().sandbox(attributes);
 
-        expect(element.attr('attr1')).toEqual(attributes.attr1);
-        expect(element.attr('attr2')).toEqual(attributes.attr2);
+        expect(element.getAttribute('attr1')).toEqual(attributes.attr1);
+        expect(element.getAttribute('attr2')).toEqual(attributes.attr2);
       });
 
       it("should be able to override id by setting it as attribute", function() {
         var idOverride = 'overridden';
-        var element = $(jasmine.getFixtures().sandbox({id: idOverride}));
-        expect(element.attr('id')).toEqual(idOverride);
+        var element = jasmine.getFixtures().sandbox({id: idOverride});
+        expect(element.getAttribute('id')).toEqual(idOverride);
       });
     });
 
@@ -240,8 +244,8 @@ describe("jasmine.Fixtures", function() {
       var attributes = {
         id: 'overridden'
       };
-      var element = $(sandbox(attributes));
-      expect(element.attr('id')).toEqual(attributes.id);
+      var element = sandbox(attributes);
+      expect(element.getAttribute('id')).toEqual(attributes.id);
     });
   });
 
